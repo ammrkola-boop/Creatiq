@@ -1,1 +1,2345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatIQ — AI-Powered Creator Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════════ */
+:root{
+  --ink:#07070d;
+  --ink2:#0f0f1a;
+  --surface:#141420;
+  --surface2:#1b1b2b;
+  --surface3:#222234;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --cream:#f4efe6;
+  --cream2:rgba(244,239,230,0.7);
+  --cream3:rgba(244,239,230,0.4);
+  --gold:#e8b84b;
+  --gold2:#f5d47a;
+  --electric:#5b5ef4;
+  --electric2:#7b7ef8;
+  --mint:#2effc0;
+  --rose:#ff5e87;
+  --muted:#4e4e68;
+  --muted2:#6b6b88;
+
+  --r-sm:12px;
+  --r-md:18px;
+  --r-lg:24px;
+  --r-xl:32px;
+
+  --nav-h:70px;
+}
+
+/* ════════════════════════════════════════════
+   RESET & BASE
+════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink);
+  color:var(--cream);
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  cursor:none;
+}
+a{text-decoration:none;color:inherit;}
+img{display:block;}
+button{font-family:'DM Sans',sans-serif;cursor:none;}
+
+/* Custom cursor */
+#cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--gold);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform .15s ease,background .2s ease,width .2s ease,height .2s ease;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(232,184,75,0.5);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform .35s ease,width .2s ease,height .2s ease,border-color .2s ease;
+}
+body:hover #cursor{opacity:1;}
+
+/* ════════════════════════════════════════════
+   SCROLLBAR
+════════════════════════════════════════════ */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--ink);}
+::-webkit-scrollbar-thumb{background:var(--electric);border-radius:4px;}
+
+/* ════════════════════════════════════════════
+   GLOBAL BG LAYERS
+════════════════════════════════════════════ */
+.bg-fixed{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+}
+.bg-grid{
+  background-image:
+    linear-gradient(rgba(91,94,244,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,94,244,.04) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+.bg-noise{
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* ════════════════════════════════════════════
+   NAV
+════════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:var(--nav-h);
+  display:flex;align-items:center;
+  padding:0 40px;
+  gap:0;
+  transition:background .4s ease,backdrop-filter .4s ease,border-color .4s ease;
+  border-bottom:1px solid transparent;
+}
+nav.scrolled{
+  background:rgba(7,7,13,.85);
+  backdrop-filter:blur(20px);
+  border-color:var(--border);
+}
+.nav-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:22px;
+  letter-spacing:-.02em;
+}
+.nav-logo svg{width:32px;height:32px;}
+.nav-logo .lo-part2{color:var(--gold);}
+.nav-links{
+  display:flex;align-items:center;gap:32px;
+  margin-left:48px;
+}
+.nav-links a{
+  font-size:13.5px;font-weight:400;
+  color:var(--cream3);
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--cream);}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+.btn-ghost{
+  padding:9px 20px;border-radius:100px;
+  font-size:13px;font-weight:400;
+  color:var(--cream2);
+  border:1px solid var(--border2);
+  background:transparent;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{
+  padding:9px 22px;border-radius:100px;
+  font-size:13px;font-weight:500;
+  color:var(--ink);background:var(--gold);
+  border:none;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 0 0 0 rgba(232,184,75,0);
+}
+.btn-primary:hover{
+  background:var(--gold2);
+  transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(232,184,75,.3);
+}
+
+/* ════════════════════════════════════════════
+   HERO
+════════════════════════════════════════════ */
+#hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:calc(var(--nav-h) + 60px) 32px 80px;
+  position:relative;z-index:1;
+  overflow:hidden;
+}
+.hero-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(91,94,244,.22) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 70%,rgba(232,184,75,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 25% at 10% 60%,rgba(46,255,192,.08) 0%,transparent 60%);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 16px;border-radius:100px;
+  border:1px solid rgba(91,94,244,.4);
+  background:rgba(91,94,244,.08);
+  font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--electric2);
+  margin-bottom:32px;
+  animation:fadeUp .8s ease both;
+}
+.hero-badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--mint);
+  box-shadow:0 0 8px var(--mint);
+  animation:blink 2s ease infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero-h1{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:clamp(42px,7vw,88px);
+  line-height:1.0;
+  letter-spacing:-.04em;
+  max-width:880px;
+  animation:fadeUp .8s ease .1s both;
+}
+.hero-h1 .line2{
+  background:linear-gradient(90deg,var(--electric2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.hero-sub{
+  font-size:clamp(15px,2vw,18px);
+  font-weight:300;
+  color:var(--cream2);
+  max-width:520px;
+  line-height:1.75;
+  margin-top:24px;
+  animation:fadeUp .8s ease .2s both;
+}
+
+.hero-cta{
+  display:flex;align-items:center;gap:14px;
+  margin-top:44px;
+  flex-wrap:wrap;justify-content:center;
+  animation:fadeUp .8s ease .3s both;
+}
+.btn-hero{
+  padding:14px 32px;border-radius:100px;
+  font-size:15px;font-weight:500;
+  color:var(--ink);background:var(--gold);
+  border:none;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 8px 32px rgba(232,184,75,.25);
+}
+.btn-hero:hover{
+  background:var(--gold2);
+  transform:translateY(-2px);
+  box-shadow:0 12px 40px rgba(232,184,75,.4);
+}
+.btn-hero-outline{
+  padding:14px 32px;border-radius:100px;
+  font-size:15px;font-weight:400;
+  color:var(--cream);
+  border:1px solid var(--border2);
+  background:transparent;
+  transition:border-color .2s,background .2s;
+}
+.btn-hero-outline:hover{
+  border-color:var(--electric2);
+  background:rgba(91,94,244,.08);
+}
+
+.hero-stats{
+  display:flex;align-items:center;gap:40px;
+  margin-top:64px;
+  animation:fadeUp .8s ease .4s both;
+  flex-wrap:wrap;justify-content:center;
+}
+.hero-stat{}
+.hero-stat-num{
+  font-family:'Syne',sans-serif;
+  font-size:28px;font-weight:800;
+  color:var(--cream);
+  letter-spacing:-.03em;
+}
+.hero-stat-num span{color:var(--gold);}
+.hero-stat-label{font-size:12px;color:var(--muted2);margin-top:2px;}
+.stat-divider{width:1px;height:36px;background:var(--border2);}
+
+/* Floating cards */
+.hero-float-left,.hero-float-right{
+  position:absolute;top:50%;
+  animation:float 6s ease-in-out infinite;
+  pointer-events:none;
+}
+.hero-float-left{left:calc(50% - 540px);transform:translateY(-50%);}
+.hero-float-right{right:calc(50% - 540px);transform:translateY(-50%);animation-delay:-3s;}
+@media(max-width:1100px){.hero-float-left,.hero-float-right{display:none;}}
+@keyframes float{0%,100%{transform:translateY(-50%) translateY(0)}50%{transform:translateY(-50%) translateY(-18px)}}
+
+.float-card{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--r-md);
+  padding:16px 20px;
+  width:200px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.fc-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
+.fc-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--cream);}
+.fc-change{font-size:12px;color:var(--mint);margin-top:4px;}
+.fc-bar{height:4px;background:var(--surface3);border-radius:4px;margin-top:12px;overflow:hidden;}
+.fc-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--electric),var(--mint));}
+.fc-row{display:flex;gap:6px;margin-top:10px;}
+.fc-pill{
+  font-size:10px;padding:4px 10px;border-radius:100px;
+  background:rgba(91,94,244,.15);color:var(--electric2);border:1px solid rgba(91,94,244,.25);
+}
+.fc-pill.gold{background:rgba(232,184,75,.1);color:var(--gold);border-color:rgba(232,184,75,.25);}
+
+/* ════════════════════════════════════════════
+   MARQUEE STRIP
+════════════════════════════════════════════ */
+.marquee-strip{
+  position:relative;z-index:1;
+  overflow:hidden;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:rgba(91,94,244,.04);
+  padding:16px 0;
+  margin-bottom:0;
+}
+.marquee-track{
+  display:flex;gap:48px;
+  animation:marquee 28s linear infinite;
+  width:max-content;
+}
+.marquee-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.marquee-item svg{width:16px;height:16px;opacity:.5;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ════════════════════════════════════════════
+   SECTION COMMONS
+════════════════════════════════════════════ */
+section{position:relative;z-index:1;}
+.section-inner{max-width:1100px;margin:0 auto;padding:100px 32px;}
+.section-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--electric2);margin-bottom:16px;
+}
+.section-eyebrow::before{
+  content:'';display:block;
+  width:20px;height:1px;background:var(--electric2);
+}
+.section-title-lg{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(28px,4vw,48px);
+  font-weight:800;letter-spacing:-.03em;
+  line-height:1.1;
+}
+.section-title-lg em{font-style:normal;color:var(--gold);}
+.section-sub{
+  font-size:15px;font-weight:300;
+  color:var(--cream2);line-height:1.8;
+  max-width:480px;margin-top:16px;
+}
+
+/* REVEAL ANIMATION */
+.reveal{
+  opacity:0;transform:translateY(30px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ════════════════════════════════════════════
+   FEATURES SECTION
+════════════════════════════════════════════ */
+#features{background:var(--ink);}
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;
+  margin-top:64px;
+  border:2px solid var(--border);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr;}}
+
+.feat-card{
+  background:var(--surface);
+  padding:40px 36px;
+  transition:background .3s;
+  position:relative;overflow:hidden;
+}
+.feat-card:hover{background:var(--surface2);}
+.feat-card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(91,94,244,.06),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.feat-card:hover::before{opacity:1;}
+.feat-icon{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:24px;
+  background:rgba(91,94,244,.12);
+  border:1px solid rgba(91,94,244,.2);
+}
+.feat-icon.gold{background:rgba(232,184,75,.1);border-color:rgba(232,184,75,.2);}
+.feat-icon.mint{background:rgba(46,255,192,.1);border-color:rgba(46,255,192,.2);}
+.feat-icon.rose{background:rgba(255,94,135,.1);border-color:rgba(255,94,135,.2);}
+.feat-icon svg{width:22px;height:22px;}
+.feat-name{
+  font-family:'Syne',sans-serif;
+  font-size:17px;font-weight:700;
+  margin-bottom:10px;
+}
+.feat-desc{
+  font-size:13.5px;font-weight:300;
+  color:var(--cream2);line-height:1.75;
+}
+.feat-tag{
+  display:inline-block;margin-top:18px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--electric2);
+  padding:4px 12px;border-radius:100px;
+  background:rgba(91,94,244,.1);border:1px solid rgba(91,94,244,.2);
+}
+.feat-tag.gold-tag{
+  color:var(--gold);
+  background:rgba(232,184,75,.08);border-color:rgba(232,184,75,.18);
+}
+.feat-tag.mint-tag{color:var(--mint);background:rgba(46,255,192,.07);border-color:rgba(46,255,192,.15);}
+
+/* FEATURED BIG CARD */
+.feat-big{
+  grid-column:span 2;
+}
+
+/* ════════════════════════════════════════════
+   DASHBOARD PREVIEW
+════════════════════════════════════════════ */
+#dashboard{background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);}
+.dashboard-wrap{
+  margin-top:56px;
+  border-radius:var(--r-xl);
+  border:1px solid var(--border2);
+  overflow:hidden;
+  box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(91,94,244,.1);
+  position:relative;
+}
+.dashboard-wrap::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(91,94,244,.6),rgba(232,184,75,.4),transparent);
+  z-index:2;
+}
+
+/* Top bar */
+.dash-topbar{
+  background:var(--surface);
+  height:52px;
+  display:flex;align-items:center;
+  padding:0 20px;
+  gap:16px;
+  border-bottom:1px solid var(--border);
+}
+.dash-dots{display:flex;gap:7px;}
+.dash-dot{width:11px;height:11px;border-radius:50%;}
+.dash-dot.r{background:#ff5f57;}
+.dash-dot.y{background:#febc2e;}
+.dash-dot.g{background:#28c840;}
+.dash-url{
+  flex:1;max-width:320px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  height:28px;
+  display:flex;align-items:center;
+  padding:0 12px;
+  font-size:11px;color:var(--muted);
+  gap:6px;
+}
+
+/* Sidebar + main */
+.dash-body{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  min-height:520px;
+  background:var(--ink2);
+}
+@media(max-width:700px){.dash-body{grid-template-columns:1fr;}}
+
+.dash-sidebar{
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:20px 0;
+}
+.dash-brand{
+  display:flex;align-items:center;gap:9px;
+  padding:0 20px 20px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:16px;
+}
+.dash-brand-icon{
+  width:30px;height:30px;
+}
+.dash-brand-name{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:16px;
+}
+.dash-brand-name span{color:var(--gold);}
+
+.dash-section-label{
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);
+  padding:0 20px;margin:16px 0 6px;
+}
+.dash-nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 20px;
+  font-size:13px;color:var(--cream3);
+  transition:background .2s,color .2s;
+  border-radius:0;
+}
+.dash-nav-item:hover,.dash-nav-item.active{
+  background:rgba(91,94,244,.1);
+  color:var(--cream);
+}
+.dash-nav-item.active{
+  border-left:2px solid var(--electric);
+}
+.dash-nav-item svg{width:15px;height:15px;opacity:.6;}
+.dash-nav-item.active svg{opacity:1;}
+
+/* Main content */
+.dash-main{
+  padding:24px;
+  display:flex;flex-direction:column;gap:20px;
+  overflow:hidden;
+}
+.dash-greeting{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.dash-greeting h2{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:700;
+}
+.dash-greeting h2 span{color:var(--gold);}
+.dash-greeting-date{font-size:12px;color:var(--muted2);}
+
+/* Metric cards */
+.dash-metrics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+@media(max-width:900px){.dash-metrics{grid-template-columns:repeat(2,1fr);}}
+.metric-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:16px;
+}
+.metric-label{font-size:11px;color:var(--muted2);margin-bottom:8px;}
+.metric-val{
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:700;
+}
+.metric-change{
+  font-size:11px;margin-top:4px;
+  display:flex;align-items:center;gap:4px;
+}
+.metric-change.up{color:var(--mint);}
+.metric-change.down{color:var(--rose);}
+
+/* Chart area */
+.dash-charts{
+  display:grid;grid-template-columns:2fr 1fr;gap:14px;
+}
+@media(max-width:900px){.dash-charts{grid-template-columns:1fr;}}
+
+.dash-chart-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:18px;
+}
+.dcc-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.dcc-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.dcc-badge{
+  font-size:10px;padding:3px 10px;border-radius:100px;
+  background:rgba(46,255,192,.1);color:var(--mint);
+  border:1px solid rgba(46,255,192,.2);
+}
+
+/* SVG chart */
+.chart-svg{width:100%;height:100px;}
+
+/* AI queue */
+.ai-queue-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid var(--border);
+}
+.ai-queue-item:last-child{border:none;}
+.aqi-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.aqi-dot.gold{background:var(--gold);}
+.aqi-dot.electric{background:var(--electric);}
+.aqi-dot.mint{background:var(--mint);}
+.aqi-dot.rose{background:var(--rose);}
+.aqi-text{font-size:12px;color:var(--cream2);flex:1;line-height:1.4;}
+.aqi-time{font-size:10px;color:var(--muted);white-space:nowrap;}
+
+/* ════════════════════════════════════════════
+   HOW IT WORKS
+════════════════════════════════════════════ */
+#howitworks{background:var(--ink);}
+.steps{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2px;margin-top:64px;
+  border:2px solid var(--border);border-radius:var(--r-xl);overflow:hidden;
+}
+@media(max-width:700px){.steps{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:420px){.steps{grid-template-columns:1fr;}}
+
+.step{
+  background:var(--surface);
+  padding:40px 28px;
+  position:relative;
+}
+.step-num{
+  font-family:'Syne',sans-serif;
+  font-size:48px;font-weight:800;
+  color:rgba(255,255,255,.04);
+  line-height:1;
+  position:absolute;top:16px;right:16px;
+}
+.step-icon{
+  width:44px;height:44px;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+  font-size:20px;
+}
+.step-icon.s1{background:rgba(91,94,244,.15);}
+.step-icon.s2{background:rgba(232,184,75,.1);}
+.step-icon.s3{background:rgba(46,255,192,.1);}
+.step-icon.s4{background:rgba(255,94,135,.1);}
+.step-name{
+  font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:700;
+  margin-bottom:10px;
+}
+.step-desc{
+  font-size:13px;color:var(--cream2);
+  line-height:1.75;font-weight:300;
+}
+.step-connector{
+  position:absolute;right:-1px;top:50%;
+  transform:translateY(-50%);
+  z-index:2;
+}
+
+/* ════════════════════════════════════════════
+   CONTENT TYPES
+════════════════════════════════════════════ */
+#platforms{
+  background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);
+}
+.platforms-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:64px;
+}
+@media(max-width:700px){.platforms-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.platforms-grid{grid-template-columns:1fr;}}
+
+.platform-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:28px 24px;
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+}
+.platform-card:hover{
+  border-color:var(--border2);
+  transform:translateY(-4px);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.platform-icon{font-size:28px;margin-bottom:16px;}
+.platform-name{
+  font-family:'Syne',sans-serif;
+  font-size:16px;font-weight:700;margin-bottom:8px;
+}
+.platform-desc{
+  font-size:13px;color:var(--cream2);
+  line-height:1.7;font-weight:300;
+}
+.platform-features{
+  display:flex;flex-direction:column;gap:6px;margin-top:16px;
+}
+.pf-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:var(--cream3);
+}
+.pf-item::before{
+  content:'';
+  width:5px;height:5px;border-radius:50%;
+  background:var(--gold);flex-shrink:0;
+}
+
+/* ════════════════════════════════════════════
+   AI FEATURES HIGHLIGHT
+════════════════════════════════════════════ */
+#ai-features{background:var(--ink);}
+.ai-split{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+  margin-top:64px;
+}
+@media(max-width:768px){.ai-split{grid-template-columns:1fr;gap:48px;}}
+
+.ai-list{display:flex;flex-direction:column;gap:24px;margin-top:32px;}
+.ai-item{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:20px;
+  border-radius:var(--r-md);
+  border:1px solid transparent;
+  transition:border-color .3s,background .3s;
+}
+.ai-item:hover{
+  background:var(--surface);
+  border-color:var(--border2);
+}
+.ai-item-icon{
+  width:40px;height:40px;flex-shrink:0;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+.ai-item-text h4{
+  font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:700;margin-bottom:6px;
+}
+.ai-item-text p{font-size:13px;color:var(--cream2);line-height:1.7;}
+
+/* AI Visual panel */
+.ai-visual{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--r-xl);
+  padding:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+  position:relative;overflow:hidden;
+}
+.ai-visual::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--electric),transparent);
+}
+.ai-chat{display:flex;flex-direction:column;gap:14px;}
+.ai-msg{display:flex;gap:10px;align-items:flex-start;}
+.ai-msg.user{flex-direction:row-reverse;}
+.ai-avatar{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.ai-avatar.bot{background:linear-gradient(135deg,var(--electric),var(--mint));}
+.ai-avatar.user-av{background:linear-gradient(135deg,var(--gold),var(--rose));}
+.ai-bubble{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 16px;
+  font-size:12.5px;line-height:1.65;
+  color:var(--cream2);
+  max-width:260px;
+}
+.ai-msg.user .ai-bubble{
+  background:rgba(91,94,244,.15);
+  border-color:rgba(91,94,244,.25);
+  color:var(--cream);
+}
+.ai-typing{
+  display:flex;gap:4px;align-items:center;padding:4px 0;
+}
+.ai-typing span{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--electric2);
+  animation:typing .9s ease infinite;
+}
+.ai-typing span:nth-child(2){animation-delay:.15s;}
+.ai-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+/* ════════════════════════════════════════════
+   TESTIMONIALS
+════════════════════════════════════════════ */
+#testimonials{background:var(--ink2);}
+.testi-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:56px;
+}
+@media(max-width:768px){.testi-grid{grid-template-columns:1fr;}}
+
+.testi-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:28px;
+  transition:border-color .3s,transform .3s;
+}
+.testi-card:hover{
+  border-color:var(--border2);
+  transform:translateY(-3px);
+}
+.testi-stars{
+  display:flex;gap:3px;margin-bottom:16px;
+}
+.testi-star{color:var(--gold);font-size:13px;}
+.testi-quote{
+  font-size:14px;color:var(--cream2);
+  line-height:1.8;font-weight:300;
+  font-style:italic;
+  margin-bottom:20px;
+}
+.testi-person{display:flex;align-items:center;gap:12px;}
+.testi-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;
+  flex-shrink:0;
+}
+.testi-name{font-size:13px;font-weight:500;}
+.testi-handle{font-size:11px;color:var(--muted2);margin-top:2px;}
+
+/* ════════════════════════════════════════════
+   PRICING
+════════════════════════════════════════════ */
+#pricing{background:var(--ink);}
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;margin-top:56px;
+  align-items:start;
+}
+@media(max-width:768px){.pricing-grid{grid-template-columns:1fr;}}
+
+.price-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  padding:36px 28px;
+  transition:border-color .3s,transform .3s;
+  position:relative;
+}
+.price-card:hover{transform:translateY(-4px);}
+.price-card.featured{
+  background:linear-gradient(160deg,rgba(91,94,244,.12) 0%,var(--surface) 60%);
+  border-color:rgba(91,94,244,.4);
+  transform:scale(1.04);
+}
+.price-card.featured:hover{transform:scale(1.04) translateY(-4px);}
+.price-badge{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  padding:5px 16px;border-radius:100px;
+  background:var(--electric);
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:white;white-space:nowrap;
+  font-weight:500;
+}
+.price-tier{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted2);margin-bottom:12px;
+}
+.price-amount{
+  display:flex;align-items:flex-start;gap:4px;
+  margin-bottom:6px;
+}
+.price-currency{
+  font-family:'Syne',sans-serif;
+  font-size:18px;font-weight:700;
+  color:var(--cream2);margin-top:6px;
+}
+.price-num{
+  font-family:'Syne',sans-serif;
+  font-size:48px;font-weight:800;
+  letter-spacing:-.04em;line-height:1;
+}
+.price-period{font-size:13px;color:var(--muted2);margin-top:10px;}
+.price-divider{
+  height:1px;background:var(--border);
+  margin:24px 0;
+}
+.price-features{
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:28px;
+}
+.pf-row{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--cream2);
+}
+.pf-check{
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.pf-check.on{background:rgba(46,255,192,.15);color:var(--mint);}
+.pf-check.off{background:var(--surface2);color:var(--muted);}
+.price-btn{
+  width:100%;padding:13px;border-radius:100px;
+  font-size:14px;font-weight:500;
+  border:1px solid var(--border2);
+  background:transparent;color:var(--cream);
+  transition:background .2s,border-color .2s,color .2s;
+}
+.price-btn:hover{background:var(--surface2);}
+.price-btn.featured-btn{
+  background:var(--electric);border-color:var(--electric);
+  color:white;
+  box-shadow:0 8px 24px rgba(91,94,244,.3);
+}
+.price-btn.featured-btn:hover{
+  background:var(--electric2);
+  box-shadow:0 12px 36px rgba(91,94,244,.45);
+}
+
+/* ════════════════════════════════════════════
+   CTA BANNER
+════════════════════════════════════════════ */
+#cta{background:var(--ink);}
+.cta-inner{
+  max-width:800px;margin:0 auto;
+  padding:80px 32px;
+  text-align:center;
+}
+.cta-box{
+  background:linear-gradient(135deg,rgba(91,94,244,.15) 0%,rgba(232,184,75,.08) 100%);
+  border:1px solid rgba(91,94,244,.3);
+  border-radius:var(--r-xl);
+  padding:64px 48px;
+  position:relative;overflow:hidden;
+}
+.cta-box::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--electric),var(--gold),transparent);
+}
+.cta-box h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(26px,4vw,44px);
+  font-weight:800;letter-spacing:-.03em;
+  line-height:1.1;
+  margin-bottom:16px;
+}
+.cta-box h2 span{
+  background:linear-gradient(90deg,var(--electric2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.cta-box p{
+  font-size:15px;color:var(--cream2);
+  line-height:1.8;margin-bottom:36px;
+}
+.cta-btns{
+  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+}
+
+/* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+footer{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  position:relative;z-index:1;
+}
+.footer-inner{
+  max-width:1100px;margin:0 auto;
+  padding:60px 32px 32px;
+}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:48px;margin-bottom:48px;
+}
+@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.footer-top{grid-template-columns:1fr;}}
+.footer-brand-name{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:22px;
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.footer-brand-name span{color:var(--gold);}
+.footer-tagline{font-size:13px;color:var(--muted2);line-height:1.7;max-width:260px;}
+.footer-col-title{
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  margin-bottom:16px;color:var(--cream);
+}
+.footer-links{display:flex;flex-direction:column;gap:9px;}
+.footer-links a{
+  font-size:13px;color:var(--muted2);
+  transition:color .2s;
+}
+.footer-links a:hover{color:var(--cream);}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  padding-top:24px;border-top:1px solid var(--border);
+}
+.footer-copy{font-size:12px;color:var(--muted);}
+.footer-socials{display:flex;gap:12px;}
+.footer-social{
+  width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted2);
+  transition:border-color .2s,color .2s;
+  font-size:14px;
+}
+.footer-social:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ════════════════════════════════════════════
+   MOBILE NAV TOGGLE
+════════════════════════════════════════════ */
+.nav-mobile-btn{
+  display:none;
+  background:none;border:1px solid var(--border2);
+  border-radius:8px;padding:8px 10px;
+  color:var(--cream);font-size:16px;
+  margin-left:auto;
+}
+@media(max-width:700px){
+  .nav-links{display:none;}
+  .nav-links.open{
+    display:flex;flex-direction:column;
+    position:fixed;top:var(--nav-h);left:0;right:0;
+    background:rgba(7,7,13,.96);
+    backdrop-filter:blur(20px);
+    padding:24px 32px;
+    border-bottom:1px solid var(--border);
+    gap:20px;z-index:99;
+  }
+  .nav-mobile-btn{display:flex;}
+  .nav-right .btn-ghost{display:none;}
+}
+
+/* ════════════════════════════════════════════
+   MISC UTILITIES
+════════════════════════════════════════════ */
+.highlight{color:var(--gold);}
+.e-highlight{color:var(--electric2);}
+.text-muted{color:var(--muted2);}
+
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Fixed BG -->
+<div class="bg-fixed bg-grid"></div>
+<div class="bg-fixed bg-noise"></div>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav id="nav">
+  <div class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none">
+      <path d="M16 2L27 8.5V23.5L16 30L5 23.5V8.5Z" fill="rgba(91,94,244,0.2)" stroke="url(#ng)" stroke-width="1"/>
+      <circle cx="16" cy="16" r="4.5" fill="url(#nc)"/>
+      <circle cx="16" cy="16" r="2.2" fill="white"/>
+      <line x1="16" y1="6" x2="16" y2="11.5" stroke="#e8b84b" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="16" y1="20.5" x2="16" y2="26" stroke="#e8b84b" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="8" y1="11" x2="12" y2="13.5" stroke="#3dffc0" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="20" y1="18.5" x2="24" y2="21" stroke="#5b5ef4" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="24" y1="11" x2="20" y2="13.5" stroke="#3dffc0" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="12" y1="18.5" x2="8" y2="21" stroke="#5b5ef4" stroke-width="1.5" stroke-linecap="round"/>
+      <defs>
+        <linearGradient id="ng" x1="5" y1="2" x2="27" y2="30" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#5b5ef4"/><stop offset="100%" stop-color="#e8b84b"/>
+        </linearGradient>
+        <linearGradient id="nc" x1="11.5" y1="11.5" x2="20.5" y2="20.5" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#5b5ef4"/><stop offset="100%" stop-color="#e8b84b"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    Creat<span class="lo-part2">IQ</span>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="#features">Features</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#pricing">Contact</a>
+    <a href="#testimonials">Reviews</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost">Log in</button>
+    <button class="btn-primary">Start Free</button>
+    <button class="nav-mobile-btn" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+
+  <!-- Float Left -->
+  <div class="hero-float-left">
+    <div class="float-card">
+      <div class="fc-label">Monthly Reach</div>
+      <div class="fc-value">2.4M</div>
+      <div class="fc-change">↑ 34% this month</div>
+      <div class="fc-bar"><div class="fc-bar-fill" style="width:72%"></div></div>
+    </div>
+  </div>
+
+  <!-- Float Right -->
+  <div class="hero-float-right">
+    <div class="float-card">
+      <div class="fc-label">AI Tasks Done</div>
+      <div class="fc-value">148</div>
+      <div class="fc-change">↑ 12 today</div>
+      <div class="fc-row">
+        <div class="fc-pill">Captions</div>
+        <div class="fc-pill gold">Schedule</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Now with AI Content Engine v3.0
+  </div>
+
+  <h1 class="hero-h1">
+    Your entire creator<br>
+    <span class="line2">business, automated.</span>
+  </h1>
+
+  <p class="hero-sub">
+    CreatIQ manages your content calendar, drafts captions, analyzes performance, schedules posts, and grows your audience — all on autopilot.
+  </p>
+
+  <div class="hero-cta">
+    <button class="btn-hero">Start for Free →</button>
+    <button class="btn-hero-outline">Watch Demo ▶</button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">50<span>K+</span></div>
+      <div class="hero-stat-label">Active Creators</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">4.2<span>M</span></div>
+      <div class="hero-stat-label">Posts Scheduled</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">98<span>%</span></div>
+      <div class="hero-stat-label">Satisfaction Rate</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">3<span>x</span></div>
+      <div class="hero-stat-label">Avg. Growth Boost</div>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="marqueeTrack">
+    <!-- items filled by JS -->
+  </div>
+</div>
+
+<!-- ══════════════════ FEATURES ══════════════════ -->
+<section id="features">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">What CreatIQ Does</p>
+      <h2 class="section-title-lg">Everything a creator needs,<br><em>powered by AI.</em></h2>
+      <p class="section-sub">From ideation to publishing — every step automated, analyzed, and optimized.</p>
+    </div>
+
+    <div class="features-grid reveal">
+      <div class="feat-card feat-big">
+        <div class="feat-icon gold">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--gold)" stroke-width="1.6">
+            <rect x="3" y="4" width="16" height="14" rx="2"/><line x1="3" y1="8" x2="19" y2="8"/>
+            <line x1="7" y1="4" x2="7" y2="8"/><line x1="15" y1="4" x2="15" y2="8"/>
+            <line x1="7" y1="12" x2="10" y2="12"/><line x1="7" y1="15" x2="13" y2="15"/>
+          </svg>
+        </div>
+        <div class="feat-name">AI Content Calendar</div>
+        <div class="feat-desc">Automatically generate a full month of content ideas tailored to your niche, audience, and trending topics. Never stare at a blank screen again. CreatIQ's engine keeps your pipeline full, balanced, and on-brand — every single week.</div>
+        <span class="feat-tag gold-tag">Core Feature</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--electric2)" stroke-width="1.6">
+            <path d="M4 18 L8 10 L12 14 L16 6 L20 18Z" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="feat-name">Analytics Hub</div>
+        <div class="feat-desc">Real-time performance data across all platforms in one clean dashboard. Track reach, saves, shares, and revenue.</div>
+        <span class="feat-tag">Live Data</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon mint">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--mint)" stroke-width="1.6">
+            <circle cx="11" cy="11" r="3"/><path d="M11 4v2M11 16v2M4 11h2M16 11h2M6.3 6.3l1.4 1.4M14.3 14.3l1.4 1.4M6.3 15.7l1.4-1.4M14.3 7.7l1.4-1.4"/>
+          </svg>
+        </div>
+        <div class="feat-name">AI Caption Writer</div>
+        <div class="feat-desc">Generate scroll-stopping captions, hashtags, and CTAs matched to your voice and platform in seconds.</div>
+        <span class="feat-tag mint-tag">Generative AI</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon rose">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--rose)" stroke-width="1.6">
+            <path d="M11 3L13.5 8.5H19L14.5 12L16.5 18L11 14.5L5.5 18L7.5 12L3 8.5H8.5Z"/>
+          </svg>
+        </div>
+        <div class="feat-name">Trend Radar</div>
+        <div class="feat-desc">Spot viral trends before they peak. AI scans your niche in real-time and alerts you to opportunities.</div>
+        <span class="feat-tag" style="color:var(--rose);background:rgba(255,94,135,.08);border-color:rgba(255,94,135,.2);">Real-time</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--electric2)" stroke-width="1.6">
+            <circle cx="11" cy="8" r="3"/><path d="M5 18c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+            <circle cx="17" cy="7" r="2"/><path d="M20 16c0-2.2-1.3-4-3-4.6"/>
+          </svg>
+        </div>
+        <div class="feat-name">Audience Insights</div>
+        <div class="feat-desc">Deep-dive into who follows you. Understand demographics, peak times, and what content keeps them engaged.</div>
+        <span class="feat-tag">Deep Analytics</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon gold">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--gold)" stroke-width="1.6">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="12" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="12" width="7" height="7" rx="1.5"/>
+            <rect x="12" y="12" width="7" height="7" rx="1.5"/>
+          </svg>
+        </div>
+        <div class="feat-name">Multi-Platform Publish</div>
+        <div class="feat-desc">Schedule and auto-publish to Instagram, TikTok, YouTube, X, LinkedIn and more from one place.</div>
+        <span class="feat-tag gold-tag">6+ Platforms</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon mint">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--mint)" stroke-width="1.6">
+            <path d="M4 7h14M4 11h10M4 15h7"/><circle cx="17" cy="15" r="3"/>
+            <path d="M19 17l2 2"/>
+          </svg>
+        </div>
+        <div class="feat-name">Brand Voice AI</div>
+        <div class="feat-desc">Train the AI on your past content and it'll write every caption, script, and hook exactly like you would.</div>
+        <span class="feat-tag mint-tag">Personalized</span>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <svg fill="none" viewBox="0 0 22 22" stroke="var(--electric2)" stroke-width="1.6">
+            <path d="M12 2L3 9v12h6v-7h6v7h6V9z"/>
+          </svg>
+        </div>
+        <div class="feat-name">Monetisation Tracker</div>
+        <div class="feat-desc">Track brand deals, affiliate income, ad revenue, and subscriptions in one clean revenue dashboard.</div>
+        <span class="feat-tag">Revenue</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ DASHBOARD ══════════════════ -->
+<section id="dashboard">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">Your Command Center</p>
+      <h2 class="section-title-lg">One dashboard for<br><em>your entire creator life.</em></h2>
+      <p class="section-sub">Built for speed, clarity and power. Every insight at a glance — no juggling tabs.</p>
+    </div>
+
+    <div class="dashboard-wrap reveal">
+      <!-- Browser bar -->
+      <div class="dash-topbar">
+        <div class="dash-dots">
+          <div class="dash-dot r"></div>
+          <div class="dash-dot y"></div>
+          <div class="dash-dot g"></div>
+        </div>
+        <div class="dash-url">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M5 1a4 4 0 100 8A4 4 0 005 1zM1.5 5h7" stroke="currentColor" stroke-linecap="round"/>
+          </svg>
+          app.creatiq.ai/dashboard
+        </div>
+      </div>
+
+      <!-- App body -->
+      <div class="dash-body">
+        <!-- Sidebar -->
+        <div class="dash-sidebar">
+          <div class="dash-brand">
+            <svg class="dash-brand-icon" viewBox="0 0 30 30" fill="none">
+              <path d="M15 2L25 8V22L15 28L5 22V8Z" fill="rgba(91,94,244,0.2)" stroke="url(#dng)" stroke-width="1"/>
+              <circle cx="15" cy="15" r="4" fill="url(#dnc)"/>
+              <circle cx="15" cy="15" r="2" fill="white"/>
+              <defs>
+                <linearGradient id="dng" x1="5" y1="2" x2="25" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#5b5ef4"/><stop offset="100%" stop-color="#e8b84b"/>
+                </linearGradient>
+                <linearGradient id="dnc" x1="11" y1="11" x2="19" y2="19" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#5b5ef4"/><stop offset="100%" stop-color="#e8b84b"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="dash-brand-name">Creat<span>IQ</span></div>
+          </div>
+
+          <div class="dash-section-label">Main</div>
+          <div class="dash-nav-item active">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+            Overview
+          </div>
+          <div class="dash-nav-item">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><line x1="2" y1="6" x2="14" y2="6"/><line x1="5" y1="3" x2="5" y2="6"/><line x1="11" y1="3" x2="11" y2="6"/></svg>
+            Calendar
+          </div>
+          <div class="dash-nav-item">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 13 L5 7 L8 10 L11 4 L14 13Z"/></svg>
+            Analytics
+          </div>
+          <div class="dash-section-label">AI Tools</div>
+          <div class="dash-nav-item">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2"/></svg>
+            AI Writer
+          </div>
+          <div class="dash-nav-item">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L10 6H14L11 8.5L12 13L8 10.5L4 13L5 8.5L2 6H6Z"/></svg>
+            Trend Radar
+          </div>
+          <div class="dash-section-label">Publish</div>
+          <div class="dash-nav-item">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10V3M5 6l3-3 3 3"/><path d="M3 10v3h10v-3"/></svg>
+            Scheduler
+          </div>
+        </div>
+
+        <!-- Main -->
+        <div class="dash-main">
+          <div class="dash-greeting">
+            <div>
+              <h2>Good morning, <span>Alex ✦</span></h2>
+              <div class="dash-greeting-date">Thursday, March 26 · 3 posts ready to go</div>
+            </div>
+            <button class="btn-primary" style="font-size:12px;padding:8px 18px;">+ New Content</button>
+          </div>
+
+          <!-- Metrics -->
+          <div class="dash-metrics">
+            <div class="metric-card">
+              <div class="metric-label">Total Followers</div>
+              <div class="metric-val">247K</div>
+              <div class="metric-change up">↑ 4.2% <span style="color:var(--muted2)">vs last month</span></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Avg. Engagement</div>
+              <div class="metric-val">8.7%</div>
+              <div class="metric-change up">↑ 1.1%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Monthly Reach</div>
+              <div class="metric-val">1.8M</div>
+              <div class="metric-change up">↑ 22%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Revenue (MTD)</div>
+              <div class="metric-val">$4.2K</div>
+              <div class="metric-change down">↓ 2.3%</div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="dash-charts">
+            <div class="dash-chart-card">
+              <div class="dcc-header">
+                <div class="dcc-title">Engagement Over Time</div>
+                <div class="dcc-badge">+22% this week</div>
+              </div>
+              <svg class="chart-svg" viewBox="0 0 400 100" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="cg1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#5b5ef4" stop-opacity=".3"/>
+                    <stop offset="100%" stop-color="#5b5ef4" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,70 C30,60 60,45 100,50 C140,55 160,30 200,25 C240,20 270,40 300,35 C330,30 360,15 400,10 L400,100 L0,100Z" fill="url(#cg1)"/>
+                <path d="M0,70 C30,60 60,45 100,50 C140,55 160,30 200,25 C240,20 270,40 300,35 C330,30 360,15 400,10" fill="none" stroke="#5b5ef4" stroke-width="2"/>
+                <!-- Gold secondary line -->
+                <path d="M0,80 C50,75 80,68 120,65 C160,62 180,55 220,52 C260,49 300,58 340,50 C370,44 390,48 400,45" fill="none" stroke="#e8b84b" stroke-width="1.5" stroke-dasharray="4 3" opacity=".6"/>
+              </svg>
+            </div>
+
+            <div class="dash-chart-card">
+              <div class="dcc-header">
+                <div class="dcc-title">AI Queue</div>
+              </div>
+              <div class="ai-queue-item">
+                <div class="aqi-dot gold"></div>
+                <div class="aqi-text">Caption for Reel #12 ready</div>
+                <div class="aqi-time">Now</div>
+              </div>
+              <div class="ai-queue-item">
+                <div class="aqi-dot electric"></div>
+                <div class="aqi-text">5 hashtag sets generated</div>
+                <div class="aqi-time">2m ago</div>
+              </div>
+              <div class="ai-queue-item">
+                <div class="aqi-dot mint"></div>
+                <div class="aqi-text">Monthly calendar drafted</div>
+                <div class="aqi-time">8m ago</div>
+              </div>
+              <div class="ai-queue-item">
+                <div class="aqi-dot rose"></div>
+                <div class="aqi-text">Trend alert: #MinimalistDecor</div>
+                <div class="aqi-time">15m ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ HOW IT WORKS ══════════════════ -->
+<section id="howitworks">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:0;">
+      <p class="section-eyebrow" style="justify-content:center;">Simple Process</p>
+      <h2 class="section-title-lg" style="text-align:center;">Up and running<br><em>in 4 steps.</em></h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon s1">🔗</div>
+        <div class="step-name">Connect Accounts</div>
+        <div class="step-desc">Link your Instagram, TikTok, YouTube, X and more in one click. We handle the rest securely.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon s2">🧠</div>
+        <div class="step-name">Train Your AI</div>
+        <div class="step-desc">Our AI learns your niche, voice, and goals from your existing content to create perfectly on-brand output.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon s3">⚡</div>
+        <div class="step-name">Generate & Schedule</div>
+        <div class="step-desc">AI drafts captions, scripts, and plans your calendar. Approve with one tap and let CreatIQ post for you.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-icon s4">📈</div>
+        <div class="step-name">Grow & Optimize</div>
+        <div class="step-desc">Watch real-time analytics and let AI automatically refine your strategy based on what's actually working.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PLATFORMS ══════════════════ -->
+<section id="platforms">
+  <div class="section-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">Supported Platforms</p>
+      <h2 class="section-title-lg">Every platform<br><em>covered.</em></h2>
+      <p class="section-sub">CreatIQ integrates natively with the platforms creators actually use — with full publishing, analytics and AI support.</p>
+    </div>
+    <div class="platforms-grid reveal">
+      <div class="platform-card">
+        <div class="platform-icon">📸</div>
+        <div class="platform-name">Instagram</div>
+        <div class="platform-desc">Full Reels, Stories, and Feed management with AI captions and best-time scheduling.</div>
+        <div class="platform-features">
+          <div class="pf-item">Auto-post Reels & Carousels</div>
+          <div class="pf-item">Story scheduling</div>
+          <div class="pf-item">Hashtag AI</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">🎵</div>
+        <div class="platform-name">TikTok</div>
+        <div class="platform-desc">Trend alerts, viral hook writing, and auto-posting with sound recommendations.</div>
+        <div class="platform-features">
+          <div class="pf-item">Hook generator</div>
+          <div class="pf-item">Trend radar alerts</div>
+          <div class="pf-item">Auto-captions</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">▶️</div>
+        <div class="platform-name">YouTube</div>
+        <div class="platform-desc">AI writes your video titles, descriptions, tags and timestamps to maximise SEO and CTR.</div>
+        <div class="platform-features">
+          <div class="pf-item">Title & thumbnail A/B</div>
+          <div class="pf-item">Description SEO</div>
+          <div class="pf-item">Chapter timestamps</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">𝕏</div>
+        <div class="platform-name">X / Twitter</div>
+        <div class="platform-desc">Thread writer, tweet scheduler, and reply automation to grow your X presence fast.</div>
+        <div class="platform-features">
+          <div class="pf-item">Thread composer</div>
+          <div class="pf-item">Engagement analytics</div>
+          <div class="pf-item">Best-time posting</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">💼</div>
+        <div class="platform-name">LinkedIn</div>
+        <div class="platform-desc">Professional post templates, thought-leadership articles, and industry trend spotting.</div>
+        <div class="platform-features">
+          <div class="pf-item">Article drafting</div>
+          <div class="pf-item">Network analytics</div>
+          <div class="pf-item">B2B targeting</div>
+        </div>
+      </div>
+      <div class="platform-card">
+        <div class="platform-icon">📌</div>
+        <div class="platform-name">Pinterest</div>
+        <div class="platform-desc">Board planning, pin descriptions, and seasonal content strategy for long-tail discovery.</div>
+        <div class="platform-features">
+          <div class="pf-item">Seasonal planning</div>
+          <div class="pf-item">Pin SEO optimizer</div>
+          <div class="pf-item">Board strategy AI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ AI FEATURES ══════════════════ -->
+<section id="ai-features">
+  <div class="section-inner">
+    <div class="ai-split reveal">
+      <div>
+        <p class="section-eyebrow">The AI Engine</p>
+        <h2 class="section-title-lg">AI that writes,<br>thinks, and <em>grows</em><br>for you.</h2>
+        <div class="ai-list">
+          <div class="ai-item">
+            <div class="ai-item-icon" style="background:rgba(91,94,244,.15);">✍️</div>
+            <div class="ai-item-text">
+              <h4>Voice-matched Writing</h4>
+              <p>Feed it 10 posts. It writes like you forever — same tone, energy, and phrasing.</p>
+            </div>
+          </div>
+          <div class="ai-item">
+            <div class="ai-item-icon" style="background:rgba(232,184,75,.1);">📅</div>
+            <div class="ai-item-text">
+              <h4>Smart Calendar Builder</h4>
+              <p>Auto-generates 30 days of content ideas based on trends, your niche, and past performance.</p>
+            </div>
+          </div>
+          <div class="ai-item">
+            <div class="ai-item-icon" style="background:rgba(46,255,192,.1);">🔍</div>
+            <div class="ai-item-text">
+              <h4>Competitor Intelligence</h4>
+              <p>Monitor what's working for others in your space and adapt winning strategies automatically.</p>
+            </div>
+          </div>
+          <div class="ai-item">
+            <div class="ai-item-icon" style="background:rgba(255,94,135,.1);">💬</div>
+            <div class="ai-item-text">
+              <h4>DM & Comment Assistant</h4>
+              <p>AI drafts thoughtful replies to comments and DMs in your voice — keeping your community warm.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Chat visual -->
+      <div class="ai-visual">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:20px;">CreatIQ AI · Live Demo</div>
+        <div class="ai-chat">
+          <div class="ai-msg user">
+            <div class="ai-avatar user-av">A</div>
+            <div class="ai-bubble">Write me an Instagram caption for my new morning routine video. Make it feel motivating and authentic.</div>
+          </div>
+          <div class="ai-msg">
+            <div class="ai-avatar bot">✦</div>
+            <div class="ai-bubble">Here's one in your style:<br><br><strong>"5am club didn't build itself — small habits, compounded daily. ☀️ What's your morning non-negotiable? Drop it below 👇"</strong><br><br>Want 3 more variations with different hooks?</div>
+          </div>
+          <div class="ai-msg user">
+            <div class="ai-avatar user-av">A</div>
+            <div class="ai-bubble">Yes, and add hashtags optimized for Reels reach.</div>
+          </div>
+          <div class="ai-msg">
+            <div class="ai-avatar bot">✦</div>
+            <div class="ai-typing">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ TESTIMONIALS ══════════════════ -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;">
+      <p class="section-eyebrow" style="justify-content:center;">Loved By Creators</p>
+      <h2 class="section-title-lg" style="text-align:center;">50,000+ creators<br><em>can't be wrong.</em></h2>
+    </div>
+    <div class="testi-grid reveal">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"CreatIQ saved me 15 hours a week. The AI caption writer sounds more like me than I do. My engagement went from 4% to 9% in 6 weeks."</div>
+        <div class="testi-person">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#5b5ef4,#2effc0);">S</div>
+          <div>
+            <div class="testi-name">Sofia Reyes</div>
+            <div class="testi-handle">@sofiacreates · 380K followers</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"The trend radar alone is worth 10x the price. I caught a viral trend 48 hours before it blew up and got 2M views on that video."</div>
+        <div class="testi-person">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#e8b84b,#ff5e87);">M</div>
+          <div>
+            <div class="testi-name">Marcus Webb</div>
+            <div class="testi-handle">@marcuswebb · 1.2M followers</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"I used to hate writing captions. Now CreatIQ drafts my whole week on Sunday morning and I barely have to edit anything. Game-changer."</div>
+        <div class="testi-person">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#2effc0,#5b5ef4);">J</div>
+          <div>
+            <div class="testi-name">Jenna Park</div>
+            <div class="testi-handle">@jennalifts · 215K followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;">
+      <p class="section-eyebrow" style="justify-content:center;">Get In Touch</p>
+      <h2 class="section-title-lg" style="text-align:center;">Ready to get<br><em>started?</em></h2>
+      <p class="section-sub" style="margin:16px auto 0;text-align:center;">Reach out and we'll set you up with everything you need.</p>
+    </div>
+
+    <div class="reveal" style="max-width:620px;margin:52px auto 0;">
+      <div style="
+        background:var(--surface);
+        border:1px solid var(--border2);
+        border-radius:var(--r-xl);
+        padding:52px 48px;
+        text-align:center;
+        position:relative;overflow:hidden;
+      ">
+        <!-- top accent line -->
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--electric),var(--gold),transparent);"></div>
+
+        <!-- icon -->
+        <div style="
+          width:72px;height:72px;border-radius:50%;
+          background:linear-gradient(135deg,rgba(91,94,244,.18),rgba(232,184,75,.12));
+          border:1px solid rgba(232,184,75,.3);
+          display:flex;align-items:center;justify-content:center;
+          font-size:30px;margin:0 auto 24px;
+        ">✉️</div>
+
+        <h3 style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;">
+          Contact us for more information
+        </h3>
+        <p style="font-size:15px;color:var(--cream2);line-height:1.8;margin-bottom:32px;max-width:400px;margin-left:auto;margin-right:auto;">
+          Have questions about CreatIQ? Want a personalised demo or to discuss how it fits your creator business? We'd love to hear from you.
+        </p>
+
+        <!-- email display -->
+        <div style="
+          background:var(--surface2);
+          border:1px solid rgba(232,184,75,.25);
+          border-radius:16px;
+          padding:18px 28px;
+          display:inline-flex;align-items:center;gap:14px;
+          margin-bottom:28px;
+          flex-wrap:wrap;justify-content:center;
+        ">
+          <span style="font-size:20px;">📧</span>
+          <span style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--gold);letter-spacing:-.01em;">
+            ammrkola@gmail.com
+          </span>
+        </div>
+
+        <!-- action buttons -->
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="mailto:ammrkola@gmail.com?subject=CreatIQ%20Enquiry&body=Hi%2C%0A%0AI%27m%20interested%20in%20learning%20more%20about%20CreatIQ.%0A%0A"
+            style="
+              background:var(--gold);color:var(--ink);
+              border-radius:100px;padding:14px 32px;
+              font-size:15px;font-weight:600;font-family:'Syne',sans-serif;
+              text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+              transition:background .2s,transform .15s,box-shadow .2s;
+              box-shadow:0 8px 28px rgba(232,184,75,.3);
+            "
+            onmouseenter="this.style.background='var(--gold2)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 36px rgba(232,184,75,.45)'"
+            onmouseleave="this.style.background='var(--gold)';this.style.transform='translateY(0)';this.style.boxShadow='0 8px 28px rgba(232,184,75,.3)'">
+            ✉ Send Email
+          </a>
+          <button id="btnCopyContact" style="
+            background:transparent;
+            border:1px solid var(--border2);
+            border-radius:100px;padding:14px 32px;
+            font-size:15px;font-weight:400;color:var(--cream);
+            font-family:'DM Sans',sans-serif;cursor:pointer;
+            transition:border-color .2s,background .2s;
+          "
+          onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+          onmouseleave="this.style.borderColor='var(--border2)';this.style.color='var(--cream)'">
+            📋 Copy Email
+          </button>
+        </div>
+
+        <p style="font-size:12px;color:var(--muted);margin-top:24px;">We typically respond within <strong style="color:var(--cream2);">24 hours</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CTA ══════════════════ -->
+<section id="cta">
+  <div class="cta-inner reveal">
+    <div class="cta-box">
+      <h2>Ready to grow<br><span>smarter, not harder?</span></h2>
+      <p>Join 50,000+ creators using CreatIQ to automate their workflow, grow their audience, and finally enjoy the creative process again.</p>
+      <div class="cta-btns">
+        <a href="mailto:ammrkola@gmail.com?subject=CreatIQ%20Enquiry&body=Hi%2C%0A%0AI%27m%20interested%20in%20getting%20started%20with%20CreatIQ.%0A%0AThanks!" class="btn-hero" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">✉ Get in Touch</a>
+        <button class="btn-hero-outline">Book a Demo</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">
+          <svg width="26" height="26" viewBox="0 0 30 30" fill="none">
+            <path d="M15 2L25 8V22L15 28L5 22V8Z" fill="rgba(91,94,244,0.2)" stroke="url(#fng)" stroke-width="1"/>
+            <circle cx="15" cy="15" r="4" fill="url(#fnc)"/>
+            <circle cx="15" cy="15" r="2" fill="white"/>
+            <defs>
+              <linearGradient id="fng" x1="5" y1="2" x2="25" y2="28" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#5b5ef4"/><stop offset="100%" stop-color="#e8b84b"/>
+              </linearGradient>
+              <linearGradient id="fnc" x1="11" y1="11" x2="19" y2="19" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#5b5ef4"/><stop offset="100%" stop-color="#e8b84b"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          Creat<span>IQ</span>
+        </div>
+        <div class="footer-tagline">The AI-powered command center for the modern content creator. Build smarter. Grow faster.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <div class="footer-links">
+          <a href="#">Features</a>
+          <a href="#pricing">Contact</a>
+          <a href="#">Dashboard</a>
+          <a href="#">AI Engine</a>
+          <a href="#">Integrations</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Resources</div>
+        <div class="footer-links">
+          <a href="#">Blog</a>
+          <a href="#">Creator Guides</a>
+          <a href="#">API Docs</a>
+          <a href="#">Changelog</a>
+          <a href="#">Status</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 CreatIQ Inc. All rights reserved.</div>
+      <div class="footer-socials">
+        <a href="#" class="footer-social">𝕏</a>
+        <a href="#" class="footer-social">in</a>
+        <a href="#" class="footer-social">▶</a>
+        <a href="#" class="footer-social">📸</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<style>
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(24px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.modal-wrap{
+  display:none;position:fixed;inset:0;z-index:2000;
+  background:rgba(7,7,13,.88);backdrop-filter:blur(14px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-box{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--r-xl);padding:48px 40px;
+  width:100%;max-width:440px;position:relative;
+  box-shadow:0 40px 100px rgba(0,0,0,.65);
+  animation:modalIn .35s cubic-bezier(.22,1,.36,1) both;
+}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--cream2);border-radius:50%;
+  width:32px;height:32px;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s;line-height:1;
+}
+.modal-close:hover{background:var(--surface3);}
+.modal-input{
+  width:100%;
+  background:var(--surface2);border:1px solid var(--border2);border-radius:10px;
+  padding:13px 16px;font-size:14px;color:var(--cream);
+  font-family:'DM Sans',sans-serif;outline:none;
+  transition:border-color .2s;box-sizing:border-box;
+}
+.modal-input:focus{border-color:var(--electric);}
+.modal-input::placeholder{color:var(--muted);}
+</style>
+
+<!-- Signup / Get Started Modal → Contact Email -->
+<div class="modal-wrap" id="modalSignup">
+  <div class="modal-box" style="max-width:460px;text-align:center;">
+    <button class="modal-close" data-close="modalSignup">×</button>
+
+    <!-- Icon -->
+    <div style="
+      width:64px;height:64px;border-radius:50%;
+      background:linear-gradient(135deg,rgba(91,94,244,.2),rgba(232,184,75,.15));
+      border:1px solid rgba(232,184,75,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;margin:0 auto 20px;
+    ">✉️</div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:10px;">
+      Get Started with CreatIQ
+    </h2>
+    <p style="font-size:14px;color:var(--cream2);line-height:1.75;margin-bottom:28px;">
+      Interested in joining or learning more?<br>
+      Reach out directly and we'll get back to you shortly.
+    </p>
+
+    <!-- Email card -->
+    <div style="
+      background:var(--surface2);
+      border:1px solid var(--border2);
+      border-radius:16px;padding:20px 24px;
+      margin-bottom:20px;position:relative;overflow:hidden;
+    ">
+      <div style="
+        position:absolute;top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,var(--electric),var(--gold));
+      "></div>
+      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;">Contact us at</div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--gold);word-break:break-all;">
+        ammrkola@gmail.com
+      </div>
+    </div>
+
+    <!-- Copy + mailto buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <button id="btnCopyEmail" style="
+        background:var(--surface2);border:1px solid var(--border2);
+        border-radius:100px;padding:12px;font-size:13px;
+        color:var(--cream2);cursor:pointer;font-family:'DM Sans',sans-serif;
+        transition:border-color .2s,color .2s;
+      "
+      onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+      onmouseleave="this.style.borderColor='var(--border2)';this.style.color='var(--cream2)'">
+        📋 Copy Email
+      </button>
+      <a href="mailto:ammrkola@gmail.com?subject=CreatIQ%20Enquiry&body=Hi%2C%0A%0AI%27m%20interested%20in%20learning%20more%20about%20CreatIQ.%0A%0APlease%20tell%20me%20more%20about%20getting%20started.%0A%0AThanks!" style="
+        background:var(--gold);color:var(--ink);
+        border-radius:100px;padding:12px;font-size:13px;font-weight:600;
+        font-family:'DM Sans',sans-serif;display:flex;align-items:center;
+        justify-content:center;gap:6px;text-decoration:none;
+        transition:background .2s;
+      "
+      onmouseenter="this.style.background='var(--gold2)'"
+      onmouseleave="this.style.background='var(--gold)'">
+        ✉ Send Email
+      </a>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;">
+      We typically respond within <strong style="color:var(--cream2);">24 hours</strong>.<br>
+      Tell us about your content goals and we'll tailor a plan for you.
+    </p>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-wrap" id="modalLogin">
+  <div class="modal-box">
+    <button class="modal-close" data-close="modalLogin">×</button>
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:30px;margin-bottom:10px;">🔑</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em;">Welcome back</h2>
+      <p style="font-size:13px;color:var(--cream2);margin-top:6px;">Log in to your CreatIQ account</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <input class="modal-input" type="email" placeholder="Email address"/>
+      <input class="modal-input" type="password" placeholder="Password"/>
+      <button class="btn-login-submit" style="
+        background:var(--electric);color:white;border:none;border-radius:100px;
+        padding:14px;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;
+        cursor:pointer;transition:background .2s;
+        box-shadow:0 6px 24px rgba(91,94,244,.3);
+      ">Log In →</button>
+      <p style="text-align:center;font-size:12px;color:var(--muted2);">
+        No account? <a href="#" class="link-switch-signup" style="color:var(--gold);text-decoration:underline;">Start for free</a>
+        &nbsp;·&nbsp;
+        <a href="#" class="link-forgot" style="color:var(--muted2);text-decoration:underline;">Forgot password?</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Demo Modal → Contact for Demo -->
+<div class="modal-wrap" id="modalDemo">
+  <div class="modal-box" style="max-width:480px;text-align:center;">
+    <button class="modal-close" data-close="modalDemo">×</button>
+
+    <div style="
+      width:64px;height:64px;border-radius:50%;
+      background:linear-gradient(135deg,rgba(91,94,244,.2),rgba(46,255,192,.1));
+      border:1px solid rgba(91,94,244,.35);
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;margin:0 auto 20px;
+    ">🎬</div>
+
+    <h2 style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:10px;">
+      Watch a Demo
+    </h2>
+    <p style="font-size:14px;color:var(--cream2);line-height:1.75;margin-bottom:28px;">
+      Want to see CreatIQ in action? Send us an email and we'll schedule a personalised walkthrough just for you.
+    </p>
+
+    <!-- What the demo covers -->
+    <div style="
+      background:var(--surface2);border:1px solid var(--border);
+      border-radius:16px;padding:20px 24px;
+      margin-bottom:24px;text-align:left;
+    ">
+      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:14px;">What we'll cover</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--cream2);">
+          <span style="color:var(--mint);">✓</span> AI Content Calendar walkthrough
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--cream2);">
+          <span style="color:var(--mint);">✓</span> Live Caption Writer & Brand Voice AI
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--cream2);">
+          <span style="color:var(--mint);">✓</span> Analytics dashboard & Trend Radar
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--cream2);">
+          <span style="color:var(--mint);">✓</span> Multi-platform scheduling in action
+        </div>
+      </div>
+    </div>
+
+    <!-- Email card -->
+    <div style="
+      background:var(--surface2);
+      border:1px solid rgba(91,94,244,.3);
+      border-radius:16px;padding:20px 24px;
+      margin-bottom:20px;position:relative;overflow:hidden;
+    ">
+      <div style="
+        position:absolute;top:0;left:0;right:0;height:2px;
+        background:linear-gradient(90deg,var(--electric),var(--mint));
+      "></div>
+      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;">Contact us at</div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--electric2);word-break:break-all;">
+        ammrkola@gmail.com
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button id="btnCopyEmailDemo" style="
+        background:var(--surface2);border:1px solid var(--border2);
+        border-radius:100px;padding:12px;font-size:13px;
+        color:var(--cream2);cursor:pointer;font-family:'DM Sans',sans-serif;
+        transition:border-color .2s,color .2s;
+      "
+      onmouseenter="this.style.borderColor='var(--electric2)';this.style.color='var(--electric2)'"
+      onmouseleave="this.style.borderColor='var(--border2)';this.style.color='var(--cream2)'">
+        📋 Copy Email
+      </button>
+      <a href="mailto:ammrkola@gmail.com?subject=CreatIQ%20Demo%20Request&body=Hi%2C%0A%0AI%27d%20love%20to%20see%20a%20demo%20of%20CreatIQ.%0A%0AMy%20preferred%20time%3A%0AWhat%20I%27m%20looking%20for%3A%0A%0AThanks!" style="
+        background:var(--electric);color:white;
+        border-radius:100px;padding:12px;font-size:13px;font-weight:500;
+        font-family:'DM Sans',sans-serif;display:flex;align-items:center;
+        justify-content:center;gap:6px;text-decoration:none;
+        transition:background .2s;
+      "
+      onmouseenter="this.style.background='var(--electric2)'"
+      onmouseleave="this.style.background='var(--electric)'">
+        ✉ Request Demo
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Contact / Book Demo Modal -->
+<div class="modal-wrap" id="modalContact">
+  <div class="modal-box" style="max-width:460px;">
+    <button class="modal-close" data-close="modalContact">×</button>
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:30px;margin-bottom:10px;">📅</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.03em;">Book a Demo</h2>
+      <p style="font-size:13px;color:var(--cream2);margin-top:6px;">30 min walkthrough with our team. Free, no pressure.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <input class="modal-input" type="text" placeholder="Your name"/>
+      <input class="modal-input" type="email" placeholder="Work email"/>
+      <select class="modal-input" style="color:var(--cream2);">
+        <option>Preferred time — Morning (9am–12pm)</option>
+        <option>Afternoon (12pm–5pm)</option>
+        <option>Evening (5pm–8pm)</option>
+      </select>
+      <button class="btn-book-submit" style="
+        background:var(--electric);color:white;border:none;border-radius:100px;
+        padding:14px;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;
+        cursor:pointer;transition:background .2s;box-shadow:0 6px 24px rgba(91,94,244,.3);
+      ">Confirm Booking →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" style="
+  position:fixed;bottom:32px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  z-index:3000;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:100px;padding:13px 24px;
+  font-size:14px;color:var(--cream);
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
+  display:flex;align-items:center;gap:10px;
+  transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s;
+  opacity:0;pointer-events:none;white-space:nowrap;max-width:90vw;
+">
+  <span id="toastIcon" style="font-size:15px;">✓</span>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<!-- ══════════════════ SCRIPTS ══════════════════ -->
+<script>
+/* ── Custom Cursor ── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    cursor.style.width='6px'; cursor.style.height='6px';
+    ring.style.width='52px'; ring.style.height='52px';
+    ring.style.borderColor='rgba(232,184,75,.7)';
+  });
+  el.addEventListener('mouseleave',()=>{
+    cursor.style.width='10px'; cursor.style.height='10px';
+    ring.style.width='36px'; ring.style.height='36px';
+    ring.style.borderColor='rgba(232,184,75,.5)';
+  });
+});
+
+/* ── Nav scroll ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY>20);
+});
+
+/* ── Reveal on scroll ── */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+},{threshold:.12});
+revealEls.forEach(el=>io.observe(el));
+
+/* ── Marquee items ── */
+const items = [
+  {icon:'📅', label:'AI Calendar'},
+  {icon:'✍️', label:'Caption Writer'},
+  {icon:'📊', label:'Deep Analytics'},
+  {icon:'⚡', label:'Auto-Scheduling'},
+  {icon:'🔍', label:'Trend Radar'},
+  {icon:'🎯', label:'Audience Targeting'},
+  {icon:'💰', label:'Revenue Tracker'},
+  {icon:'🤖', label:'Brand Voice AI'},
+  {icon:'🌐', label:'Multi-Platform'},
+  {icon:'🔗', label:'6+ Integrations'},
+];
+const track = document.getElementById('marqueeTrack');
+[...items,...items].forEach(item=>{
+  const el = document.createElement('div');
+  el.className='marquee-item';
+  el.innerHTML=`<span style="font-size:15px;">${item.icon}</span>${item.label}`;
+  track.appendChild(el);
+});
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast');
+  const iconMap={success:'✅',info:'💡',error:'❌'};
+  const colorMap={success:'var(--mint)',info:'var(--electric2)',error:'var(--rose)'};
+  document.getElementById('toastIcon').textContent=iconMap[type]||'✅';
+  document.getElementById('toastIcon').style.color=colorMap[type]||'var(--mint)';
+  document.getElementById('toastMsg').textContent=msg;
+  t.style.transform='translateX(-50%) translateY(0)';
+  t.style.opacity='1';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{
+    t.style.transform='translateX(-50%) translateY(80px)';
+    t.style.opacity='0';
+  },3400);
+}
+
+/* ══════════════════════════════════════════
+   MODAL SYSTEM
+══════════════════════════════════════════ */
+function openModal(id){
+  const m=document.getElementById(id);
+  m.style.display='flex';
+  document.body.style.overflow='hidden';
+  if(id==='modalDemo'){
+    setTimeout(()=>{const b=document.getElementById('demoBar');if(b)b.style.width='42%';},300);
+  }
+}
+function closeModal(id){
+  const m=document.getElementById(id);
+  if(m){ m.style.display='none'; }
+  document.body.style.overflow='';
+}
+
+// Universal close on backdrop click
+document.querySelectorAll('.modal-wrap').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) closeModal(m.id); });
+});
+// Universal close buttons via data-close
+document.addEventListener('click',e=>{
+  const id=e.target.dataset.close;
+  if(id) closeModal(id);
+});
+// Escape key
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.modal-wrap').forEach(m=>closeModal(m.id));
+});
+
+/* ══════════════════════════════════════════
+   FORM HANDLERS
+══════════════════════════════════════════ */
+
+// Copy email buttons
+document.getElementById('btnCopyEmail').addEventListener('click',()=>{
+  navigator.clipboard.writeText('ammrkola@gmail.com').then(()=>{
+    showToast('Email copied to clipboard!','success');
+  }).catch(()=>{
+    showToast('ammrkola@gmail.com','info');
+  });
+});
+document.getElementById('btnCopyEmailDemo').addEventListener('click',()=>{
+  navigator.clipboard.writeText('ammrkola@gmail.com').then(()=>{
+    showToast('Email copied to clipboard!','success');
+  }).catch(()=>{
+    showToast('ammrkola@gmail.com','info');
+  });
+});
+
+// Login
+document.querySelector('.btn-login-submit').addEventListener('click',()=>{
+  showToast('Logged in! Redirecting to dashboard…','success');
+  setTimeout(()=>closeModal('modalLogin'),1800);
+});
+
+// Book demo
+document.querySelector('.btn-book-submit').addEventListener('click',()=>{
+  showToast('Demo booked! Check your email for confirmation.','success');
+  closeModal('modalContact');
+});
+
+// Checkout
+// (removed — no pricing plans)
+
+// Copy contact button (main contact section)
+const btnCopyContact = document.getElementById('btnCopyContact');
+if(btnCopyContact) btnCopyContact.addEventListener('click',()=>{
+  navigator.clipboard.writeText('ammrkola@gmail.com').then(()=>{
+    showToast('Email copied to clipboard!','success');
+  }).catch(()=>showToast('ammrkola@gmail.com','info'));
+});
+
+// Modal switch links (login modal)
+const linkSwitchSignup = document.querySelector('.link-switch-signup');
+const linkForgot = document.querySelector('.link-forgot');
+if(linkSwitchSignup) linkSwitchSignup.addEventListener('click',e=>{ e.preventDefault(); closeModal('modalLogin'); openModal('modalSignup'); });
+if(linkForgot) linkForgot.addEventListener('click',e=>{ e.preventDefault(); showToast('Password reset email sent!','info'); });
+
+// Nav: Log In
+document.querySelector('.btn-ghost').addEventListener('click',()=>openModal('modalLogin'));
+
+// Nav: Start Free
+document.querySelector('nav .btn-primary').addEventListener('click',()=>openModal('modalSignup'));
+
+// Hero: Start for Free
+document.querySelector('.btn-hero').addEventListener('click',()=>openModal('modalSignup'));
+
+// Hero: Watch Demo
+document.querySelector('.btn-hero-outline').addEventListener('click',()=>openModal('modalDemo'));
+
+// Dashboard "+ New Content" button
+const newContentBtn=document.querySelector('.dash-main .btn-primary');
+if(newContentBtn) newContentBtn.addEventListener('click',()=>showToast('Opening content composer…','info'));
+
+// Dashboard sidebar nav items
+document.querySelectorAll('.dash-nav-item').forEach(item=>{
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.dash-nav-item').forEach(i=>i.classList.remove('active'));
+    this.classList.add('active');
+    showToast('Opening '+this.textContent.trim()+'…','info');
+  });
+});
+
+// Pricing/contact buttons → now just open the contact modal or mailto
+// (pricing section replaced with contact section)
+
+// CTA section buttons
+const ctaBtns=document.querySelectorAll('.cta-btns button');
+if(ctaBtns[0]) ctaBtns[0].addEventListener('click',()=>openModal('modalContact'));
+
+// Logo → scroll top
+document.querySelector('.nav-logo').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+const footerBrand=document.querySelector('.footer-brand-name');
+if(footerBrand) footerBrand.style.cursor='pointer', footerBrand.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// Mobile nav: close on link click
+document.querySelectorAll('#navLinks a').forEach(a=>{
+  a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open'));
+});
+
+// Footer socials
+document.querySelectorAll('.footer-social').forEach(s=>{
+  s.addEventListener('click',e=>{ e.preventDefault(); showToast('Social page coming soon!','info'); });
+});
+
+// Footer links
+document.querySelectorAll('.footer-links a').forEach(a=>{
+  a.addEventListener('click',e=>{ e.preventDefault(); showToast('This page is coming soon!','info'); });
+});
+
+// Feature cards hover ripple
+document.querySelectorAll('.feat-card,.platform-card').forEach(card=>{
+  card.style.cursor='pointer';
+  card.addEventListener('click',()=>showToast('Learn more coming soon!','info'));
+});
+
+</script>
+
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║           COPYRIGHT NOTICE — ALL RIGHTS RESERVED        ║
+  ╠══════════════════════════════════════════════════════════╣
+  ║  © 2025 CreatIQ. All rights reserved.                   ║
+  ║                                                          ║
+  ║  This website and all its contents — including but not   ║
+  ║  limited to the source code, design, graphics, layout,   ║
+  ║  text, and brand identity — are the exclusive            ║
+  ║  intellectual property of CreatIQ.                       ║
+  ║                                                          ║
+  ║  STRICTLY PROHIBITED without prior written permission:   ║
+  ║  · Copying or reproducing any part of this code          ║
+  ║  · Modifying, adapting, or creating derivative works     ║
+  ║  · Distributing, sublicensing, or reselling              ║
+  ║  · Using the design or brand for any other purpose       ║
+  ║                                                          ║
+  ║  Unauthorised use may result in legal action.            ║
+  ║                                                          ║
+  ║  Contact: ammrkola@gmail.com                             ║
+  ╚══════════════════════════════════════════════════════════╝
+-->
+</body>
+</html>
 
